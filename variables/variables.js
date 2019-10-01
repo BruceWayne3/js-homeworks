@@ -1,0 +1,21 @@
+`use strict`
+console.log('Задача № 1');
+var title;
+var price;
+console.log('Задача № 2');
+title = 'Телепорт бытовой VZHIH-101';
+price = 10000;
+console.log(`В наличии имеется: «${title}»`);
+console.log(`Стоимость товара ${price} Q`);
+console.log('Задача № 3');
+var quantity = 2;
+var discount = 10;
+var amount;
+amount = price * quantity - price * quantity / 100 * discount;
+console.log(`Цена покупки составит ${amount} Q`);
+console.log('Задача № 4. Дополнительная (необязательная)');
+var account = 52334224;
+var priceOfOneTeleport = 6500;
+var balance = account % priceOfOneTeleport;
+var numbers = (account - balance) / priceOfOneTeleport;
+console.log(`Мы можем закупить ${numbers} единиц товара, после закупки на счету останется ${balance} Q`);
