@@ -71,7 +71,7 @@ function LoyaltyCard(name, sum) {
 }
 
 Object.defineProperty(LoyaltyCard.prototype, 'balance', {
-  get: function() {
+  get() {
     return this.orderSumSet.reduce(function(memo, el) {
       return memo + el;
     }, 0);
@@ -79,7 +79,7 @@ Object.defineProperty(LoyaltyCard.prototype, 'balance', {
 });
 
 Object.defineProperty(LoyaltyCard.prototype, 'discount', {
-  get: function() {
+  get() {
     if (this.balance <= 3000) {
       return 0;
     } else if (this.balance <= 5000) {
