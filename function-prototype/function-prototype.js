@@ -1,4 +1,6 @@
-`use strict`
+`use strict`;
+console.log(`Домашнее задание к лекции 2.4 «Прототип и конструктор функции»`);
+
 const items = [
   {
     title: 'Телепорт бытовой VZHIH-101',
@@ -17,7 +19,6 @@ const items = [
   }
 ];
 
-console.log('Задача № 1. Продажа со склада и из резерва «в долг».');
 const itemPrototype = {
   sell(field, amount = 1) {
     if (this[field] < amount) {
@@ -34,11 +35,15 @@ const itemPrototype = {
   }
 };
 
-function sellItem(item,amount,isHolded = false) {
-  if (isHolded === true) {
-    itemPrototype.sellHolded.call(item,amount);
-  } else {
-    itemPrototype.sellAvailable.call(item,amount);
+function sellItem(item, amount, isHolded = false) {
+  try {
+    if(isHolded === true) {
+      itemPrototype.sellHolded.call(item, amount);
+    } else {
+      itemPrototype.sellAvailable.call(item, amount);
+    };
+    } catch (err) {
+    console.log(err);
   };
 };
 
@@ -50,12 +55,16 @@ sellItem(items[1], 4, true);
 console.log(items[1].available); // 4
 console.log(items[1].holded); // 1
 
+sellItem(items[1], 4, true);
+console.log(items[1].available);
+console.log(items[1].holded); 
+
 const item = { available: 0, holded: 1 };
 sellItem(item, 1, true);
 console.log(item.available); // 0
 console.log(item.holded); // 0
+console.log('');
 
-console.log('Задача № 2. Форматированный вывод списка.');
 function formatFull() {
   return `${this.title}:\n\tдоступно ${this.available} шт.\n\tв резерве ${this.holded} шт.`;
 }
@@ -68,8 +77,8 @@ function show(format) {
   console.log(format());
 }
 
-function showItems(list,formatter) {
-  for (let item of list) {
+function showItems(list, formatter) {
+  for(let item of list) {
     show(formatter.bind(item));
   };
 };
@@ -77,8 +86,8 @@ function showItems(list,formatter) {
 showItems(items, formatFull);
 console.log('---');
 showItems(items, formatLite);
+console.log('');
 
-console.log('Задача № 3. Кнопка «Купить».');
 function createButton(title, onclick) {
   return {
     title,
@@ -87,18 +96,18 @@ function createButton(title, onclick) {
       this.onclick.call(this);
     }
   };
-};
+}
 
 function createBuyButtons(items) {
-  let buttonsArray = [];
+  let buttons = [];
   for (let item of items) {
-    let button = createButton('Купить', onclick = () => {
-      console.log(`${item.title} добавлен в корзину`);
-    });
-    buttonsArray.push(button);
-  };
-  return buttonsArray;
-};
+    let onclick = () => {
+      console.log(`${item.title} добавлен в корзину`)
+      };
+    buttons.push(createButton.call(item, 'Купить', onclick));
+  }
+  return buttons;
+}
 
 const buttons = createBuyButtons(items);
 buttons[0].click();

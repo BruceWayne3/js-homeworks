@@ -1,4 +1,6 @@
-`use strict`
+`use strict`;
+console.log(`Домашнее задание к лекции 3.1 «Создание конструктора и прототипа»`);
+
 function rand(min, max) {
   return Math.ceil((max - min + 1) * Math.random()) + min - 1;
 }
@@ -13,111 +15,116 @@ const pointsInfo = [
   { title: 'Саратов', coords: [30, 91, 77] }
 ];
 
-console.log('Задача № 1. Пункты телепортации заказов.');
-function OrdersTeleportationPoint(title,x,y,z) {
-  this.title = title;
-  this.x = x;
-  this.y = y;
-  this.z = z;
-  this.getDistance = function(x,y,z) {
-    return Math.sqrt(Math.pow((x - this.x),2) + Math.pow((y - this.y),2) + Math.pow((z - this.z),2));
-  };
-};
+class OrdersTeleportationPoint {
+  constructor(title, x, y, z) {
+    this.title = title;
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
+
+  getDistance(x, y, z) {
+    return Math.sqrt(Math.pow(this.x - x, 2) + Math.pow(this.y - y, 2) + Math.pow(this.z - z, 2));
+  }
+}
 
 const point = new OrdersTeleportationPoint('Темная сторона Луны', 500, 200, 97);
 let distance = point.getDistance(100, -100, 33);
 console.log(`Расстояние до пункта «${point.title}» составит ${distance.toFixed(0)} единиц`);
+console.log('');
 
-console.log('Задача № 2. Поиск ближайшего пункта телепортации.');
-function OrdersTeleportationPointLocator(points) {
-  try {
-    if(Array.isArray(points) === false) {
-      throw `${points} не является массивом!`
-    };
-    let instances = [];
-    for(let point of points) {
-      if(point instanceof OrdersTeleportationPoint) {
-        instances.push(point);
-      };
-    };
-    let distances = [];
-    this.getClosest = function(x,y,z) {
-      for(let instance of instances) {
-        distances.push(instance.getDistance(x,y,z));
-      };
-      let distance = Math.min(...distances);
-      return instances[distances.indexOf(distance)];
-    };
-  } catch(err) {
-    console.log(`Ошибка: ${err}`);
-  };
-};
+class OrdersTeleportationPointLocator {
+  constructor(points) {
+    try {
+      if(Array.isArray(points) === false) {
+        throw 'Not an array';
+      }
+      this.array = [];
+      for (let point of points) {
+        if(OrdersTeleportationPoint.prototype.isPrototypeOf(point) === true) {
+          this.array.push(point);
+        } else {
+          continue;
+        }
+      }
+    } catch(e) {
+      console.log(e);
+    }
+  }
+
+  getClosest(x, y, z) {
+    const results = this.array.map(function(el) {
+      return el.getDistance(x, y, z);
+    });
+    let result = Math.min(...results);
+    return this.array[results.indexOf(result)];
+  }
+}
 
 const points = pointsInfo.map(point => new OrdersTeleportationPoint(point.title,...point.coords));
 const locator = new OrdersTeleportationPointLocator(points);
 
 const closestPoint = locator.getClosest(333, 294, 77);
 console.log(`Ближайший пункт телепортации заказов «${closestPoint.title}»`);
+console.log('');
 
-console.log('Задача № 3. Карты лояльности.');
-function LoyaltyCard(name, sum) {
-  this.owner = name;
-  this.orderSumSet = [sum];
-  Object.defineProperty(this, 'id', {
-    value: generateId(),
-    writable: false,
-    configurable: false
-  });
-}
-
-Object.defineProperty(LoyaltyCard.prototype, 'balance', {
-  get() {
-    return this.orderSumSet.reduce(function(memo, el) {
-      return memo + el;
-    }, 0);
+class LoyaltyCard {
+  constructor(name, sum) {
+    this.owner = name;
+    this.sum = [sum];
+    Object.defineProperty(this, 'id', {
+      value: generateId(),
+      writable: false,
+      configurable: false
+      });
   }
-});
 
-Object.defineProperty(LoyaltyCard.prototype, 'discount', {
-  get() {
-    if (this.balance <= 3000) {
+  get balance() {
+    return this.sum.reduce(function(memo,el) {
+      memo += el;
+      return memo;
+    });
+  }
+
+  get discount() {
+    if(this.balance <= 3000) {
       return 0;
-    } else if (this.balance <= 5000) {
+    } else if(this.balance > 3000 && this.balance <= 5000) {
       return 3;
-    } else if (this.balance <= 10000) {
+    } else if(this.balance > 5000 && this.balance <= 10000) {
       return 5;
     } else {
       return 7;
     }
   }
-});
 
-LoyaltyCard.prototype.getFinalSum = function(sum) {
-  return sum - (sum * this.discount * 0.01);
-};
+  getFinalSum(newOrderSum) {
+    return newOrderSum - (newOrderSum / 100 * this.discount);
+  }
+  
+  append(newOrderSum) {
+    this.sum.push(newOrderSum);
+  }
 
-LoyaltyCard.prototype.append = function(sum) {
-  this.orderSumSet.push(sum);
-};
-
-LoyaltyCard.prototype.show = function() {
-  console.log(`Карта ${this.id}`);
-  console.log(`Владелец: ${this.owner}`);
-  console.log(`Баланс: ${this.balance}`);
-  console.log(`Текущая скидка: ${this.discount}%`);
-  console.log(`Заказы:`);
-  this.orderSumSet.forEach(function(el, index) {
-    console.log(` #${index + 1} на сумму ${el}`);
-  });
-};
+  show() {
+    console.log(`Карта ${this.id}:
+  Владелец: ${this.owner}
+  Баланс: ${this.balance} Q
+  Текущая скидка: ${this.discount} %
+  Заказы:`);
+    for(let order of this.sum) {
+      console.log(`#${this.sum.indexOf(order) + 1} на сумму ${order} Q`);
+    }
+  };
+}
 
 const card = new LoyaltyCard('Иванов Иван', 6300);
 
 let newOrderSum = 7000;
 let finalSum = card.getFinalSum(newOrderSum);
-console.log(`Итоговая сумма для заказа на ${newOrderSum}Q по карте
-  составит ${finalSum}Q. Скидка ${card.discount}%.`);
+console.log(`Итоговая сумма для заказа на ${newOrderSum} Q по карте
+  составит ${finalSum} Q. Скидка ${card.discount} %.`);
 
 card.append(newOrderSum);
-console.log(`Баланс карты после покупки ${card.balance}.`);
+console.log(`Баланс карты после покупки ${card.balance} Q.`);
 card.show();

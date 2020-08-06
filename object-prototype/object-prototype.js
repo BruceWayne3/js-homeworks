@@ -1,4 +1,6 @@
-`use strict`
+`use strict`;
+console.log(`Домашнее задание к лекции 2.2 «Прототип и конструктор объекта»`);
+
 var positions = [
   {
     title: 'Телепорт бытовой VZHIH-101',
@@ -20,7 +22,6 @@ var positions = [
   }
 ];
 
-console.log('Задача № 1. Резервирование.');
 const itemPrototype = {
   hold(amount = 1) {
     if (this.available < amount) {
@@ -55,55 +56,63 @@ items[2].hold(1);
 
 for (let item of items) {
   console.log(`Товар ${item}`);
+}
+console.log('');
+
+itemPrototype.unhold = function(amount = this.holded) {
+  if (this.holded < amount) {
+      return false;
+    }
+    this.available += amount;
+    this.holded -= amount;
+    return true;
 };
 
-console.log('----------------');
-itemPrototype.unhold = function(amount = this.holded) {
-  if (amount > this.holded) {
-    return false
-  };
-  this.holded -= amount;
-  this.available += amount;
-  return true; 
-};
 
 items[0].unhold(1);
 console.log(`Товар ${items[0]}`);
 items[1].unhold();
-console.log(`Товар ${items[1]}`);  
-items[2].unhold(0);
+console.log(`Товар ${items[1]}`);
+items[2].unhold(2);
 console.log(`Товар ${items[2]}`);
+console.log('');
 
-console.log('Задача № 2. Цена со скидкой');
-const config = {
-    get () {
-      return this.price - this.price * this.discount / 100;
+for(let position of positions) {
+  const config = {
+    get() {
+      return this.price - (this.price * this.discount / 100);
     },
-    set (finalPrice) {
+    set(newFinalPrice) {
       try {
-        if (finalPrice > this.price) {
-          throw `finalPrice больше изначальной цены!`
-        };
-        this.discount = (this.price - finalPrice) / this.price * 100;  
+        if(newFinalPrice > this.price) {
+          throw 'Цена со скидкой больше базовой цены.';
+        }
+      this.discount = 100 - (newFinalPrice * 100 / this.price);
       } catch(err) {
-        console.log(`Ошибка: ${err}`);
+        console.log(`Ошибка при расчете скидки: ${err}`);
       }
     }
-  };
+  }
 
-for (position of positions) {
   Object.defineProperty(position, 'finalPrice', config);
 };
 
-console.log(positions[0].finalPrice);
+console.log(positions[0].finalPrice); 
 positions[2].finalPrice = 28500;
+positions[2].finalPrice = 68500;
 console.log(positions[2].discount);
-positions[0].finalPrice = 60000;
+console.log(positions[1].finalPrice); 
+positions[0].finalPrice = 500;
+console.log(positions[0].discount);
+console.log('');
 
-console.log('Задача № 3. Проверка полей');
-function isValidPosition(form,requiredFields) {
-  for(let i = 0; i < requiredFields.length; i++) {
-    if(!(requiredFields[i] in form)) {
+function isValidPosition(item, requiredFields) {
+  let keys = Object.keys(item);
+  if (keys.length !== requiredFields.length) {
+    return false;
+  };
+  for(let requiredField of requiredFields) {
+    if(!keys.includes(requiredField)) {
       return false;
     };
   };
@@ -119,25 +128,21 @@ let form1 = {
 let form2 = {
   title: 'Товар Телепорт бытовой VZHIH-101',
   discount: 10
-}
-
-
-if ( isValidPosition(form1, requiredFields) ) {
-  console.log('Форма № 1 заполнена верно');
-} else {
-  console.log('В форме № 1 не заполнены необходимые поля');
-}
-
-if ( isValidPosition(form2, requiredFields) ) {
-  console.log('Форма № 2 заполнена верно');
-} else {
-  console.log('В форме № 2 не заполнены необходимые поля');
-}
-
+};
 let form3 = {
   title: 'Товар Телепорт бытовой VZHIH-101',
   price: 7800
 };
+if ( isValidPosition(form1, requiredFields) ) {
+  console.log('Форма №1 заполнена верно');
+} else {
+  console.log('В форме №1 не заполнены необходимые поля');
+}
+if ( isValidPosition(form2, requiredFields) ) {
+  console.log('Форма №2 заполнена верно');
+} else {
+  console.log('В форме №2 не заполнены необходимые поля');
+}
 if ( isValidPosition(form3, requiredFields) ) {
   console.log('Форма №3 заполнена верно');
 } else {

@@ -1,59 +1,61 @@
-`use strict`
-console.log('Задача № 1');
-const TAX = 73;
-let sum = 0;
-function taxes(price) {
-  sum += price / 100 * TAX;
-  return sum; 
-};
-taxes(100);
-taxes(100);
-taxes(100);
-console.log(`Налог с продаж (${TAX} %), к оплате: ${taxes(0)} Q`);
+`use strict`;
 
-console.log('Задача № 2');
-let paper = 30;
-function packaging(width,height,length) {
-  let square = 2 * (width * height + width * length + height * length);
-  if (square > paper) {
-    console.log(`Заказ (${width}/${height}/${length} м) не упакован, осталось упаковочной бумаги ${paper} м2`); 
-    return false;
-  } else {
-    paper -= square;
-    console.log(`Заказ (${width}/${height}/${length} м) упакован, осталось упаковочной бумаги ${paper} м2`); 
+console.log(`Домашнее задание к лекции 1.5 «Замыкания и область видимости»`);
+
+const TAX = 73/100;
+let summ = 0;
+
+function totalTax(price) {
+  return summ += price * TAX;
+}
+
+totalTax(10000);
+totalTax(100);
+
+console.log(`Налог с продаж (73 %), к оплате: ${totalTax(0)} Q`);
+console.log('');
+
+let wrappingPaper = 30;
+
+function packaging(width, height, length) {
+  let s = 2 * (width * height + width * length + height * length);
+
+  if(wrappingPaper >= s) {
+    wrappingPaper -= s;
     return true;
+  } else {
+    return false;
   };
 };
 
-packaging(1,0.2,0.7);
-packaging(100,30,7);
-packaging(1,1,1);
-packaging(1,1,1);
-packaging(1,1,1);
+packaging(1, 0.2, 0.7);
+console.log(`Заказ (1/0.2/0.7 м) упакован, осталось упаковочной бумаги ${wrappingPaper} м2`);
+packaging(100, 30, 7);
+console.log(`Заказ (100/30/7 м) не упакован, осталось упаковочной бумаги ${wrappingPaper} м2`);
 
-console.log('Задача № 3');
-let charges = [ 7, 2, 1, 4, 8 ];
-let functionsCounter = [];
-for (let i = 0; i < charges.length; i++) {
-  function counter() {
-    if (charges[i] > 1) {
-      charges[i]--;
-      console.log(`Телепорт ${i+ 1} использован, заряд — ${charges[i]} единиц`);
-    } else if (charges[i] === 1) {
-      charges[i]--;
-      console.log(`Телепорт ${i+ 1} использован, заряд — 0 единиц, требуется перезарядка!`);
+let teleports = [ 7, 2, 1, 4, 8 ];
+let functionCounters = [];
+
+for(let i = 0; i < teleports.length; i++) {
+  functionCounters[i] = function() {
+    if(teleports[i] > 0) {
+      teleports[i]--;
+      if(teleports[i] > 0) {
+        console.log(`Телепорт ${i+1} использован, заряд — ${teleports[i]} единиц`);
+      } else {
+        console.log(`Телепорт ${i+1} использован, заряд — 0 единиц, требуется перезарядка!`);
+      }
     } else {
-      console.log(`Телепорт ${i+ 1} недоступен, перезаряжается`);      
-    };
+      console.log(`Телепорт ${i+1} недоступен, перезаряжается`);
+    }
   };
-  functionsCounter.push(counter);
 };
 
-functionsCounter[1]();
-functionsCounter[0]();
-functionsCounter[2]();
-functionsCounter[4]();
-functionsCounter[3]();
-functionsCounter[4]();
-functionsCounter[1]();
-functionsCounter[1]();
+functionCounters[1]();
+functionCounters[0]();
+functionCounters[2]();
+functionCounters[4]();
+functionCounters[3]();
+functionCounters[4]();
+functionCounters[1]();
+functionCounters[1]();

@@ -1,21 +1,21 @@
-`use strict`
+`use strict`;
+console.log(`Домашнее задание к лекции 2.3 «Обертки для примитивов»`);
+
 function showSpecialPrice() {
   console.log('Введен секретный код. Все цены уменьшены вдвое!');
-}
+};
 
-console.log('Задача № 1. Пользовательский ввод.');
 function fixAmount(amount) {
-  if (typeof(amount) === 'number') {
+  if(typeof(amount) === 'number') {
     return amount;
-  } else if (amount.match(/\d+/g) === null) {
+  } else if(isNaN(parseFloat(amount)) === true) {
     return -1;
   } else {
-    amount = amount.match(/\d+/g);
-    if (amount.length > 1) {
-      amount = amount.join('.');
-      return amount;
-    }
-    return amount;
+    if(amount.indexOf(',') === -1) {
+      return amount = parseFloat(amount);
+    } else {
+      return amount = parseFloat(amount.replace(',','.'));
+    };
   };
 };
 
@@ -31,16 +31,14 @@ for (let order of orders) {
   let result = fixAmount(order.amount);
   console.log(`Заказ на сумму: ${result * order.price} Q`);
 };
+console.log('');
 
-console.log('Задача № 2. Секретный код.');
-const chars = [];
+const chars = []
 function handleKey(char) {
   chars.push(char);
-  let result = chars.join('').toLowerCase();
-  if (result.slice(-4) === 'r2d2') {
+  let result = chars.join('');
+  if(result.substr(-4).toLowerCase() === 'r2d2') {
     showSpecialPrice();
-  } else {
-    return;
   };
 };
 
@@ -48,15 +46,15 @@ var keys = ['2', '4', 'R', '2', 'd', '2'];
 for (let key of keys) {
   handleKey(key);
 };
+console.log('');
 
-console.log('Задача №3. Импорт CSV файла');
-function parseData(cells,data,separator = ',') {
-  const result = [];
-  for (item of data) {
-    item = item.split(separator);
+const result = [];
+function parseData(cells, strings, delimiter = ',') {
+  for(let string of strings) {
+    string = string.split(delimiter);
     let object = {};
-    for (let i = 0; i < item.length; i++ ) {
-      object[cells[i]] = item[i];
+    for(let i = 0; i < cells.length; i++) {
+      object[cells[i]] = string[i];
     };
     result.push(object);
   };

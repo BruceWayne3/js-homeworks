@@ -1,24 +1,25 @@
-`use strict`
-console.log('Задача № 1. Генератор штрих-кодов');
+`use strict`;
+console.log(`Домашнее задание к лекции 4.1 «Символы и итераторы»`);
+
 class BarcodeGenerator {
   constructor(size = 1) {
     this.size = size;
   }
-  create() {
-    let code = [];
-    for(let i = 0; i < this.size; i++) {
-      code[i] = Math.floor(Math.random() * 10);
-    };
-    code = code.join('');
-    let prefix = this[BarcodeGenerator.prefix];
-    if(prefix === undefined) {
-      return code;
-    };
-    return `${prefix}-${code}`;
-  };
-};
 
-BarcodeGenerator.prefix = Symbol();
+  create() {
+    let result = [];
+    for(let i = 0; i < this.size; i++) {
+      result.push(Math.floor(Math.random() * 10));
+    }
+    result = result.join('');
+    if(this[BarcodeGenerator.prefix]) {
+      this[Symbol()] = this[BarcodeGenerator.prefix];
+      return `${this[BarcodeGenerator.prefix]}-${result}`;
+    } else {
+      return result;
+    }
+  }
+}
 
 const generator = new BarcodeGenerator(4);
 
@@ -32,74 +33,80 @@ console.log(generator.create());
 
 delete generator[BarcodeGenerator.prefix];
 console.log(generator.create());
+console.log('');
 
-console.log(`Задача № 2. Электронная очередь`);
 class HexRange {
   constructor(from, to) {
     this.from = from;
     this.to = to;
   }
-  
+
   [Symbol.iterator]() {
     let current = this.from;
     let last = this.to;
-    
+
     return {
       next() {
         if (current <= last) {
-          let currentHex = current.toString(16);
-          current++;
           return {
             done: false,
-            value: currentHex
-          };
-        } else {
-          return {
-            done: true
+            value: (current++).toString(16)
+            };
+            } else {
+              return {
+                done: true
           };
         }
       }
-    };
+    }
   }
 }
-
 let queue = new HexRange(247, 253);
 console.log(...queue);
+console.log('');
 
-
-
-console.log(`Задача № 3. Рабочие дни`);
 class DateRange {
-	constructor(from, to) {
-    this.from = new Date(from.getTime());
-    this.to = new Date(to.getTime());
+  constructor(from, to) {
+    this.from = from;
+    this.to = to;
   }
+
   [Symbol.iterator]() {
-  	let from = new Date(this.from.getTime());
-  	let to = new Date(this.to.getTime());
+    let from = this.from;
+    let last = this.to;
+    let current;
+
     return {
-      current: new Date(from.getTime()),
       next() {
-        let day = this.current.getDay();
-        let date = this.current.getDate();
-        if (day === 6) {
-          this.current.setDate(date + 2);
-        } else if (day === 0) {
-          this.current.setDate(date + 1);
+        if(current === undefined) {
+          current = from;
+          return {
+            done: false,
+            value: from
+          }
         }
-        if (this.current > to) {
+        if(current.getDate() === last.getDate() && current.getMonth() === last.getMonth()) {
           return {
             done: true
-          };
-        }           
-        let curDate = new Date(this.current.getTime());
-        this.current.setDate(this.current.getDate() + 1);
-        return {
-          value: curDate,
-          done: false
-        }; 
+          }
+        } else if (current.getDay() === 5) {
+          return {
+            done: false,
+            value: current = new Date(Date.parse(current) + 3 * 24 * 60 * 60 * 1000)
+          }
+        } else if(current.getDay() === 6) {
+          return {
+            done: false,
+            value: current = new Date(Date.parse(current) + 2 * 24 * 60 * 60 * 1000)
+          }
+        } else {
+          return {
+            done: false,
+            value: current = new Date(Date.parse(current) + 24 * 60 * 60 * 1000)
+          }
+        }
       }
-    };  
+    }
   }
 }
 

@@ -1,12 +1,13 @@
-`use strict`
-console.log('Задача № 1. Купон-палиндром.');
+`use strict`;
+console.log(`Домашнее задание к лекции 2.6 «Регулярные выражения»`);
+
 function checkCoupon(code) {
-  let result = code.toLowerCase().replace(/[^A-Za-z0-9]/g,'');
-  if(result.length < 10) {
+  code = code.replace(/[^A-Za-z0-9]/g, '').toLowerCase();
+  if(code.length < 10) {
     return false;
   };
-  let reverseResult = result.split('').reverse().join('');
-  if (result === reverseResult) {
+  codeReverse = code.split('').reverse().join('');
+  if(code === codeReverse) {
     return true;
   };
   return false;
@@ -25,11 +26,11 @@ for (let code of codes) {
   let result = checkCoupon(code) ? 'подходит' : 'не подходит';
   console.log(`Код «${code}» ${result}`);
 }
+console.log('');
 
-console.log('Задача № 2. Вырезаем теги.');
 function stripTags(text) {
-  let result = text.replace(/[\<\w\>\<\/\w\>]/g,'');
-  return result;
+  text = text.replace(/[\<\w\>\<\/\w\>]/g, '');
+  return text;
 };
 
 const texts = [
@@ -40,30 +41,28 @@ const texts = [
 for (let text of texts) {
   console.log(stripTags(text));
 }
+console.log('');
 
-console.log('Задача № 3. Валидатор форм.');
-function validate(formsData, dataRequirement) {
-  let regExpression;
-  for (let item of dataRequirement) {
-    if (typeof item.rule === 'string') {
-      switch (item.name) {
-        case 'email' :
-          regExpression = /^[a-zA-Z0-9][a-zA-Z0-9-_\.]*@/;
-        break;
-        case 'phone' :
-          regExpression = /^\+7[\d]{10}/;
-        break;
-      }
-      if (regExpression.test(formsData[item.name]) === false) {
+function validate(form, fields) {
+  for(let field of fields) {
+    if(typeof(field.rule) === 'string') {
+      if(field.rule === 'email') {
+        let emailEx = /\w\@\w/g;
+        if(!emailEx.test(form.email)) {
+          return false;
+        };
+      } else {
+        let phoneEx = /8|\+7\d+/;
+        if(!phoneEx.test(form.phone)) {
+          return false;
+        };
+      };
+    } else {
+      if(!field.rule.test(form.name)) {
         return false;
-      }
-    } else if (typeof item.rule !== 'string') {
-      regExpression = item.rule;
-      if (regExpression.test(formsData[item.name]) === false) {
-        return false;
-      }
-    }
-  }
+      };
+    };
+  };
   return true;
 };
 
@@ -76,7 +75,7 @@ const fields = [
 const forms = [
   { name: 'Ivan Ivanov', email: 'ivan@test.co', phone: '+79212753690' },
   { name: 'III', email: 'ivan@test', phone: '11111' },
-  { name: 'Bruce Wayne', email: 'Batman', phone: '8999666' },
+  { name: 'Bruce Wayne', email: 'brucewayne@gmail.com', phone: '12345678'}
 ];
 
 for (let form of forms) {

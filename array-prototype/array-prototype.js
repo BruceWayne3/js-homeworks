@@ -1,4 +1,6 @@
-`use strict`
+`use strict`;
+console.log(`Домашнее задание к лекции 2.5 «Прототип и конструктор массива»`);
+
 const clients = [{
   name: 'Филип Фрай',
   email: 'fray@mail.un',
@@ -16,34 +18,30 @@ const clients = [{
   orders: [ 720 ]
 }];
 
-console.log('Задача № 1. Поиск клиентов.');
 clients.findByName = function(name) {
-  return clients.find(function(el) {
-    return el.name === name;
+  return clients.find(function(object) {
+    return object.name === name;
   })
 };
 
 const clientOne = clients.findByName('Доктор Джон Зоидберг');
 console.log(clientOne.email); // zoidberg-md@list.un
-
 const clientTwo = clients.findByName('Люрр');
 console.log(typeof clientTwo); // undefined
+console.log('');
 
-console.log('Задача № 2. Сортируем по сумме покупок.');
-function compareByTotalSumm(left,right) {
-  let firstClient = left.orders.reduce(function(memo,el) {
-    memo += el;
-    return memo;
-  },0);
+function compareByTotalSumm(left, right) {
+  const leftSum = left.orders.reduce(function (memo, el) {
+    return memo += el;
+  }, 0);
 
-  let secondClient = right.orders.reduce(function(memo,el) {
-    memo += el;
-    return memo;
-  },0);
+  const rightSum = right.orders.reduce(function (memo, el) {
+    return memo += el;
+  }, 0);
 
-  if (secondClient > firstClient) {
+  if(leftSum < rightSum) {
     return 1;
-  } else if (secondClient === firstClient) {
+  } else if(leftSum === rightSum) {
     return 0;
   } else {
     return -1;
@@ -53,20 +51,19 @@ function compareByTotalSumm(left,right) {
 clients
   .sort(compareByTotalSumm)
   .forEach(client => console.log(client.name));
+console.log('');
 
-console.log('Задача № 3. Рассылка писем.');
 function sendMail(email) {
   console.log(`Письмо отправлено на адрес ${email}`);
-}
+};
 
 function getSubscribedEmails(list) {
-  let result = list.filter(function(el) {
+  const subscribers = list.filter(function(el) {
     return el.isSubscribed === true;
   });
-  return result.reduce(function(memo,el) {
-    memo.push(el.email);
-    return memo;
-  },[]); 
+  return subscribers.map(function(el) {
+    return el.email;
+  });
 };
 
 getSubscribedEmails(clients).forEach(sendMail);
